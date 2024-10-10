@@ -14,6 +14,9 @@ app.use(
   })
 );
 app.use(express.json());
+app.get("/", (req, res) => {
+  res.send("Deployed Successfully");
+});
 app.use("/api/location", locationRoutes);
 
 app.use("*", (req, res) => {
