@@ -1,8 +1,8 @@
 const reportModel = require("./../models/ReportModel");
 
 exports.reportAnonymous = async (req, res) => {
-  const { filesArray, latitude, longitude } = req.body;
-
+  const { filesArray, latitude, longitude, description } = req.body;
+  console.log(description);
   try {
     const newReport = await reportModel.create({
       filesArray,
@@ -10,6 +10,7 @@ exports.reportAnonymous = async (req, res) => {
         latitude,
         longitude,
       },
+      description,
     });
     return res.status(201).json({
       Message: "Reported Successfully",
