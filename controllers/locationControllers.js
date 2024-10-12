@@ -23,3 +23,11 @@ exports.reportAnonymous = async (req, res) => {
     });
   }
 };
+
+exports.getAllReports = async(req, res) => {
+  const AllReports = await reportModel.find({});
+  console.log(AllReports);
+  return res.status(200).json({
+    AllReports,
+  });
+};
