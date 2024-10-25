@@ -1,23 +1,44 @@
 const reportModel = require("./../models/ReportModel");
-
+const axios = require("axios");
 // Function to handle anonymous reporting
 exports.reportAnonymous = async (req, res) => {
-  const { filesArray, latitude, longitude, description } = req.body;
-  console.log(description);
+  const {
+    filesArray,
+    latitude,
+    longitude,
+    description,
+    category,
+    recaptchaToken,
+  } = req.body;
+  const secretKey = "6LfSs2sqAAAAAA88QJJYZZNehF02FpuOrspAtuNu";
+
   try {
-    const newReport = await reportModel.create({
-      filesArray,
-      location: {
-        latitude,
-        longitude,
-      },
-      description,
-    });
-    return res.status(201).json({
-      Message: "Reported Successfully",
-      newReport,
-    });
+    const response = await axios.post(
+      "https://www.google.com/recaptcha/api/siteverify",
+      `secret=${secretKey}&response=${recaptchaToken}`
+    );
+    // const data = await response.json();
+    if (response.data.success) {
+      const newReport = await reportModel.create({
+        filesArray,
+        location: {
+          latitude,
+          longitude,
+        },
+        description,
+        category,
+      });
+      return res.status(201).json({
+        Message: "Reported Successfully",
+        newReport,
+      });
+    } else {
+      return res
+        .status(400)
+        .json({ Message: "reCAPTCHA verification failed." });
+    }
   } catch (err) {
+    console.log(err);
     return res.status(500).json({
       Message: "Failed to report. Please try again.",
       error: err.message, // Optionally include error details for debugging
