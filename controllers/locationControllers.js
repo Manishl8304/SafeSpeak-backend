@@ -38,7 +38,6 @@ exports.reportAnonymous = async (req, res) => {
         .json({ Message: "reCAPTCHA verification failed." });
     }
   } catch (err) {
-    console.log(err);
     return res.status(500).json({
       Message: "Failed to report. Please try again.",
       error: err.message, // Optionally include error details for debugging
