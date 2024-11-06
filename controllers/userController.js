@@ -73,9 +73,9 @@ exports.login = async (req, res, next) => {
 
     const cookieOptions = {
       maxAge: 24 * 60 * 60 * 1000,
-      secure: true,
-      httpOnly: true,
-      sameSite: "none",
+      // secure: true,
+      // httpOnly: true,
+      sameSite: "lax",
       path: "/",
     };
     res.cookie("jwt", token, cookieOptions);
