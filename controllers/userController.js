@@ -72,12 +72,11 @@ exports.login = async (req, res, next) => {
     );
 
     const cookieOptions = {
-      expire: new Date(
-        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-      ),
+      maxAge: 24 * 60 * 60 * 1000,
       secure: true,
       httpOnly: true,
       sameSite: "none",
+      path: "/",
     };
     res.cookie("jwt", token, cookieOptions);
     return res.status(200).json({
