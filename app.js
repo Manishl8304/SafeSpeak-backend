@@ -11,7 +11,7 @@ const app = express();
 const server = http.createServer(app);
 app.use(
   cors({
-    // origin: ["http://localhost:5173", "https://safe-speak-xp7j.vercel.app/"],
+    origin: ["http://localhost:5173", "https://safe-speak-xp7j.vercel.app"],
     credentials: true,
   })
 );
