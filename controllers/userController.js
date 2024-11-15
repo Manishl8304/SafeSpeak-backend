@@ -72,12 +72,13 @@ exports.login = async (req, res, next) => {
     );
 
     const cookieOptions = {
-      maxAge: 24 * 60 * 60 * 1000,
-      // secure: true,
-      // httpOnly: true,
-      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      secure: process.env.NODE_ENV === "production", // Set to true in production
+      httpOnly: process.env.NODE_ENV === "production", // Secure the cookie against client-side access
+      sameSite: "Lax",
       path: "/",
     };
+
     res.cookie("jwt", token, cookieOptions);
     return res.status(200).json({
       Status: "Success",
