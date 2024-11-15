@@ -6,6 +6,10 @@ const reportSchema = new mongoose.Schema(
     location: { latitude: String, longitude: String },
     description: String,
     category: String,
+    reportedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Refer to the User model
+    },
   },
   { timestamps: true }
 ); // Enable timestamps

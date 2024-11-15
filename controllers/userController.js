@@ -1,17 +1,6 @@
 const User = require("../models/userModel");
 const JWT = require("jsonwebtoken");
 
-// exports.getUserDetail = async (req, res, next) => {
-//   try {
-//     const { userEmail } = req.body;
-//     const existingUser = await User.findOne({ userEmail });
-//     res.status(200).json({
-//       Status: "Success",
-//       Message: "User Found successfully",
-//       existingUser,
-//     });
-//   } catch (err) {}
-// };
 exports.signup = async (req, res, next) => {
   try {
     const { userName, userEmail, userPass } = req.body;
@@ -84,13 +73,37 @@ exports.login = async (req, res, next) => {
     return res.status(200).json({
       Status: "Success",
       Message: "Successfully logged in",
-      user: { userEmail: findUser.userEmail, userName: findUser.userName },
+      user: findUser,
       token,
     });
   } catch (err) {
     res.status(400).json({
       Status: "Failed",
       Message: "Login failed",
+      error: err,
+    });
+  }
+};
+
+exports.logout = (req, res, next) => {
+  try {
+    // Clear the JWT cookie
+    res.cookie("jwt", "", {
+      maxAge: 0, // Expire immediately
+      httpOnly: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      path: "/", // Match the path used when setting the cookie
+    });
+
+    res.status(200).json({
+      Status: "Success",
+      Message: "Successfully logged out",
+    });
+  } catch (err) {
+    res.status(500).json({
+      Status: "Failed",
+      Message: "Logout failed",
       error: err,
     });
   }

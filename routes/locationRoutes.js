@@ -5,5 +5,6 @@ const Router = express.Router();
 
 Router.post("/reportAnonymous", locationFunctions.reportAnonymous);
 Router.get("/getAllReports", locationFunctions.getAllReports);
+Router.get("/getAllReportsByEmail/:email", locationFunctions.getAllReportsByEmail);
 
 module.exports = Router;

@@ -1,3 +1,4 @@
+const User = require("../models/userModel");
 const reportModel = require("./../models/ReportModel");
 const axios = require("axios");
 // Function to handle anonymous reporting
@@ -9,6 +10,7 @@ exports.reportAnonymous = async (req, res) => {
     description,
     category,
     recaptchaToken,
+    userInfo,
   } = req.body;
   const secretKey = "6LfSs2sqAAAAAA88QJJYZZNehF02FpuOrspAtuNu";
 
@@ -18,6 +20,7 @@ exports.reportAnonymous = async (req, res) => {
       `secret=${secretKey}&response=${recaptchaToken}`
     );
     // const data = await response.json();
+    const user = await User.findOne({ userEmail: userInfo.userEmail });
     if (response.data.success) {
       const newReport = await reportModel.create({
         filesArray,
@@ -27,6 +30,7 @@ exports.reportAnonymous = async (req, res) => {
         },
         description,
         category,
+        reportedBy: user ? user._id : null,
       });
       return res.status(201).json({
         Message: "Reported Successfully",
@@ -49,6 +53,27 @@ exports.reportAnonymous = async (req, res) => {
 exports.getAllReports = async (req, res) => {
   try {
     const reports = await reportModel.find({});
+    if (!reports.length) {
+      return res.status(404).json({
+        Message: "No reports found",
+      });
+    }
+    return res.status(200).json({
+      Message: "Reports retrieved successfully",
+      reports,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      Message: "Failed to fetch reports. Please try again.",
+      error: err.message,
+    });
+  }
+};
+
+exports.getAllReportsByEmail = async (req, res) => {
+  try {
+    const user = await User.findOne({ userEmail: req.params.email });
+    const reports = await reportModel.find({ reportedBy: user._id });
     if (!reports.length) {
       return res.status(404).json({
         Message: "No reports found",
