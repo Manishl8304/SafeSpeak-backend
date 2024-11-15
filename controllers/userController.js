@@ -80,6 +80,7 @@ exports.login = async (req, res, next) => {
     };
 
     res.cookie("jwt", token, cookieOptions);
+    console.log(token);
     return res.status(200).json({
       Status: "Success",
       Message: "Successfully logged in",
