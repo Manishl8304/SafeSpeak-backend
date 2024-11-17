@@ -50,10 +50,14 @@ exports.login = catchAsync(async (req, res, next) => {
 
   const cookieOptions = {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
-    secure: process.env.NODE_ENV === "production", // Set to true in production
-    httpOnly: process.env.NODE_ENV === "production", // Secure the cookie against client-side access
-    sameSite: "Lax",
+    secure: process.env.NODE_ENV === "production" ? true : false, // Set to true in production
+    httpOnly: process.env.NODE_ENV === "production" ? true : false, // Secure the cookie against client-side access
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     path: "/",
+    domain:
+      process.env.NODE_ENV === "production"
+        ? "https://safe-speak-xp7j.vercel.app/"
+        : "http://localhost:5173/",
   };
 
   res.cookie("jwt", token, cookieOptions);
@@ -82,7 +86,6 @@ exports.logout = catchAsync((req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-
   let token = req.cookies.jwt;
   if (!token) {
     return next(
