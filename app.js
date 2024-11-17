@@ -11,6 +11,20 @@ dotenv.config({ path: "./.env" });
 
 const app = express();
 const server = http.createServer(app);
+app.use((req, res, next) => {
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://safe-speak-xp7j.vercel.app"
+  ); // Frontend URL
+  res.setHeader("Access-Control-Allow-Credentials", "true"); // Allow cookies
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, DELETE"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://safe-speak-xp7j.vercel.app"],
