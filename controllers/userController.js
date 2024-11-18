@@ -28,6 +28,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 exports.login = catchAsync(async (req, res, next) => {
   const { userEmail, userPass } = req.body;
+  console.log("User Email: ", userEmail);
 
   const findUser = await User.findOne({ userEmail });
   if (!findUser) {
@@ -56,7 +57,7 @@ exports.login = catchAsync(async (req, res, next) => {
   };
 
   console.log("Cookie Options: ", cookieOptions);
-  
+
   res.cookie("jwt", token, cookieOptions);
   return res.status(200).json({
     Status: "Success",
