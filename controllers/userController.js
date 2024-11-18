@@ -49,17 +49,14 @@ exports.login = catchAsync(async (req, res, next) => {
   });
 
   const cookieOptions = {
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
-    secure: process.env.NODE_ENV === "production" ? true : false, // Set to true in production
-    httpOnly: process.env.NODE_ENV === "production" ? true : false, // Secure the cookie against client-side access
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-    path: "/",
-    domain:
-      process.env.NODE_ENV === "production"
-        ? "safe-speak-xp7j.vercel.app"
-        : "localhost",
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: true, 
+    httpOnly: true,
+    sameSite: "None",
   };
 
+  console.log("Cookie Options: ", cookieOptions);
+  
   res.cookie("jwt", token, cookieOptions);
   return res.status(200).json({
     Status: "Success",
