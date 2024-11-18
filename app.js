@@ -14,7 +14,7 @@ const server = http.createServer(app);
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "https://safe-speak-xp7j.vercel.app"
+    "https://safe-speak-smoky.vercel.app"
   ); // Frontend URL
   res.setHeader("Access-Control-Allow-Credentials", "true"); // Allow cookies
   res.setHeader(
@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://safe-speak-xp7j.vercel.app", "https://safe-speak-smoky.vercel.app/"],
+    origin: ["http://localhost:5173", "https://safe-speak-smoky.vercel.app"],
     credentials: true,
   })
 );
