@@ -7,4 +7,3 @@ exports.errorHandler = (err, req, res, next) => {
   });
 };
 
-// module.exports = errorhandler;

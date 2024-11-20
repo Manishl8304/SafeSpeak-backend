@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 dotenv.config({ path: "./.env" });
 
-const db = process.env.DATABASE;
+const db = process.env.DATABASE; // Get the database connection string from environment variables
 mongoose.connect(db).then(() => {
   console.log("Database connected");
 });

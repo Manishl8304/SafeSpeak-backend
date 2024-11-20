@@ -6,6 +6,7 @@ const appError = require("./../utils/appError");
 exports.signup = catchAsync(async (req, res, next) => {
   const { userName, userEmail, userPass } = req.body;
 
+  // Check if the email is already registered
   const existingUser = await User.findOne({ userEmail });
   if (existingUser) {
     return next(
@@ -13,6 +14,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     );
   }
 
+  // Create new user
   const newUser = await User.create({
     userName,
     userEmail,
@@ -28,8 +30,8 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 exports.login = catchAsync(async (req, res, next) => {
   const { userEmail, userPass } = req.body;
-  console.log("User Email: ", userEmail);
 
+  // Check if the user exists
   const findUser = await User.findOne({ userEmail });
   if (!findUser) {
     return res.status(400).json({
@@ -38,6 +40,7 @@ exports.login = catchAsync(async (req, res, next) => {
     });
   }
 
+  // Verify password
   if (findUser.userPass != userPass) {
     return res.status(401).json({
       Status: "Failed",
@@ -45,19 +48,18 @@ exports.login = catchAsync(async (req, res, next) => {
     });
   }
 
+  // Generate token
   const token = JWT.sign({ id: findUser._id }, `${process.env.JWT_SECRET}`, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
+  // Set cookie options
   const cookieOptions = {
-    maxAge: 24 * 60 * 60 * 1000,
-    secure: true, 
-    httpOnly: true,
-    sameSite: "None",
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    sameSite: "Lax",
   };
 
-  console.log("Cookie Options: ", cookieOptions);
-
+  // Send cookie and response
   res.cookie("jwt", token, cookieOptions);
   return res.status(200).json({
     Status: "Success",
@@ -81,29 +83,4 @@ exports.logout = catchAsync((req, res, next) => {
     Status: "Success",
     Message: "Successfully logged out",
   });
-});
-
-exports.protect = catchAsync(async (req, res, next) => {
-  let token = req.cookies.jwt;
-  if (!token) {
-    return next(
-      new appError(401, "Failed", "You are not logged in. Please log in first!")
-    );
-  }
-  const decoded = JWT.verify(token, process.env.JWT_SECRET);
-
-  const currentUser = await User.findById(decoded.id);
-
-  if (!currentUser) {
-    return next(
-      new appError(
-        401,
-        "Failed",
-        "The user belonging to this token does not exist."
-      )
-    );
-  }
-
-  req.user = currentUser;
-  next();
 });

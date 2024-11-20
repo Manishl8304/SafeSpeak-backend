@@ -1,9 +1,9 @@
 const User = require("../models/userModel");
-const reportModel = require("./../models/ReportModel");
+const reportModel = require("../models/ReportModel");
 const axios = require("axios");
-const catchAsync = require("./../utils/catchAsync");
+const catchAsync = require("../utils/catchAsync");
 
-// Function to handle anonymous reporting
+// Handle anonymous reporting
 exports.reportAnonymous = async (req, res) => {
   const {
     filesArray,
@@ -13,50 +13,53 @@ exports.reportAnonymous = async (req, res) => {
     category,
     recaptchaToken,
     userInfo,
+    address,
   } = req.body;
 
-  const secretKey = "6LfSs2sqAAAAAA88QJJYZZNehF02FpuOrspAtuNu";
+  const secretKey = "6LfSs2sqAAAAAA88QJJYZZNehF02FpuOrspAtuNu"; // reCAPTCHA secret key
 
   try {
+    // Verify reCAPTCHA token
     const response = await axios.post(
       "https://www.google.com/recaptcha/api/siteverify",
       `secret=${secretKey}&response=${recaptchaToken}`
     );
+
     if (response.data.success) {
-      let user;
+      let user = null;
+
       if (userInfo != null) {
         user = await User.findOne({ userEmail: userInfo.userEmail });
       }
+
+      // Create new report
       const newReport = await reportModel.create({
         filesArray,
-        location: {
-          latitude,
-          longitude,
-        },
+        location: { latitude, longitude },
         description,
         category,
-        reportedBy: userInfo,
+        reportedBy: userInfo || null,
+        address,
       });
+
       return res.status(201).json({
         Status: "Success",
         Message: "Reported Successfully",
         newReport,
       });
     } else {
-      return res
-        .status(400)
-        .json({ Status: "Failed", Message: "reCAPTCHA verification failed." });
+      return res.status(400).json({ Status: "Failed", Message: "reCAPTCHA verification failed." });
     }
   } catch (err) {
     return res.status(500).json({
       Status: "Failed",
       Message: "Failed to report. Please try again.",
-      error: err.message, // Optionally include error details for debugging
+      error: err.message,
     });
   }
 };
 
-// Function to get all reports
+// Get all reports
 exports.getAllReports = async (req, res) => {
   try {
     const reports = await reportModel.find({});
@@ -66,6 +69,7 @@ exports.getAllReports = async (req, res) => {
         Message: "No reports found",
       });
     }
+
     return res.status(200).json({
       Status: "Success",
       Message: "Reports retrieved successfully",
@@ -80,15 +84,16 @@ exports.getAllReports = async (req, res) => {
   }
 };
 
+// Get reports by email
 exports.getAllReportsByEmail = async (req, res) => {
   try {
     const user = await User.findOne({ userEmail: req.params.email });
     const reports = await reportModel.find({ reportedBy: user._id });
+
     if (!reports.length) {
-      return res.status(404).json({
-        Message: "No reports found",
-      });
+      return res.status(404).json({ Message: "No reports found" });
     }
+
     return res.status(200).json({
       Message: "Reports retrieved successfully",
       reports,
@@ -101,12 +106,13 @@ exports.getAllReportsByEmail = async (req, res) => {
   }
 };
 
-exports.getAllReportsById = catchAsync(async (req, res, next) => {
+// Get reports by user ID
+exports.getAllReportsById = catchAsync(async (req, res) => {
   const currentUserId = req.params.id;
   const reports = await reportModel.find({ reportedBy: currentUserId });
 
   if (!reports.length) {
-    return res.status(200).json({
+    return res.status(404).json({
       Status: "Failed",
       Message: "No reports found",
     });
@@ -116,5 +122,37 @@ exports.getAllReportsById = catchAsync(async (req, res, next) => {
     Status: "Success",
     Message: "Reports retrieved successfully",
     reports,
+  });
+});
+
+// Set report status
+exports.setReportStatus = catchAsync(async (req, res) => {
+  const currentReportId = req.params.id;
+  const { status } = req.body;
+
+  if (!status) {
+    return res.status(400).json({
+      Status: "Error",
+      Message: "Status is required.",
+    });
+  }
+
+  const updatedReport = await reportModel.findByIdAndUpdate(
+    currentReportId,
+    { status },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedReport) {
+    return res.status(404).json({
+      Status: "Error",
+      Message: "Report not found.",
+    });
+  }
+
+  res.status(200).json({
+    Status: "Success",
+    Message: "Report status changed successfully",
+    updatedReport,
   });
 });

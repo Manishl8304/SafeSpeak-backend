@@ -4,15 +4,17 @@ const reportSchema = new mongoose.Schema(
   {
     filesArray: [String],
     location: { latitude: String, longitude: String },
+    address: String,
     description: String,
     category: String,
     reportedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Refer to the User model
+      ref: "User", // Reference to the User model
     },
+    status: { type: String, default: "Not Specified" },
   },
-  { timestamps: true }
-); // Enable timestamps
+  { timestamps: true } // Enable automatic timestamping
+);
 
 const reportModel = mongoose.model("Report", reportSchema);
 
