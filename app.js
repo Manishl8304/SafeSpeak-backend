@@ -39,3 +39,5 @@ app.use("*", (req, res) => {
 });
 
 app.use(errorFunctions.errorHandler);
+
+module.exports = server;
