@@ -13,12 +13,14 @@ const app = express();
 const server = http.createServer(app);
 
 // Update CORS options to accept requests from everywhere
-app.use(cors({
-  origin: '*', // Allow all origins
-  credentials: true, // Allow cookies
-  methods: 'GET, POST, OPTIONS, PUT, DELETE',
-  allowedHeaders: 'Content-Type, Authorization',
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://safe-speak-xp7j.vercel.app"], // Allow all origins
+    credentials: true, // Allow cookies
+    methods: "GET, POST, OPTIONS, PUT, DELETE",
+    allowedHeaders: "Content-Type, Authorization",
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
