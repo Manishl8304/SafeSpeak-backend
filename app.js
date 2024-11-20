@@ -26,10 +26,7 @@ app.use((req, res, next) => {
 });
 
 app.use(
-  cors({
-    origin: ["http://localhost:5173", "https://safe-speak-smoky.vercel.app"],
-    credentials: true,
-  })
+  cors()
 );
 app.use(express.json());
 app.use(cookieParser());
