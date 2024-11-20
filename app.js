@@ -26,8 +26,11 @@ app.use((req, res, next) => {
 });
 
 app.use(
-  cors()
+  cors({
+    origin:"*"
+  })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 app.get("/", (req, res) => {
