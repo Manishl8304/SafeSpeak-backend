@@ -9,9 +9,7 @@ dotenv.config({ path: "./.env" });
 const app = express();
 const server = http.createServer(app);
 app.use(
-  cors({
-    origin: [process.env.ADMIN_URL, "https://safe-speak-xp7j.vercel.app"],
-  })
+  cors()
 );
 app.use(express.json());
 app.get("/", (req, res) => {
