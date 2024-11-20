@@ -11,31 +11,23 @@ dotenv.config({ path: "./.env" });
 
 const app = express();
 const server = http.createServer(app);
-app.use((req, res, next) => {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "https://safe-speak-smoky.vercel.app"
-  ); // Frontend URL
-  res.setHeader("Access-Control-Allow-Credentials", "true"); // Allow cookies
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, DELETE"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
 
-app.use(
-  cors()
-);
+// Update CORS options to accept requests from everywhere
+app.use(cors({
+  origin: '*', // Allow all origins
+  credentials: true, // Allow cookies
+  methods: 'GET, POST, OPTIONS, PUT, DELETE',
+  allowedHeaders: 'Content-Type, Authorization',
+}));
+
 app.use(express.json());
 app.use(cookieParser());
+
 app.get("/", (req, res) => {
   res.send("Deployed Successfully");
 });
 
 app.use("/api/location", locationRoutes);
-
 app.use("/api/user", userRoutes);
 
 app.use("*", (req, res) => {
@@ -47,4 +39,3 @@ app.use("*", (req, res) => {
 });
 
 app.use(errorFunctions.errorHandler);
-module.exports = server;
