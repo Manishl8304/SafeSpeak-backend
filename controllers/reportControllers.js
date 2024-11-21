@@ -15,7 +15,7 @@ exports.reportAnonymous = async (req, res) => {
     userInfo,
     address,
   } = req.body;
-
+  console.log("rfed");
   const secretKey = "6LfSs2sqAAAAAA88QJJYZZNehF02FpuOrspAtuNu"; // reCAPTCHA secret key
 
   try {
@@ -25,6 +25,7 @@ exports.reportAnonymous = async (req, res) => {
       `secret=${secretKey}&response=${recaptchaToken}`
     );
 
+    console.log("rfed");
     if (response.data.success) {
       let user = null;
 
@@ -38,7 +39,7 @@ exports.reportAnonymous = async (req, res) => {
         location: { latitude, longitude },
         description,
         category,
-        name: user.userName,
+        name: user != null ? user.userName : "Anonymous User",
         reportedBy: userInfo || null,
         address,
       });
