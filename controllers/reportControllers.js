@@ -42,6 +42,7 @@ exports.reportAnonymous = async (req, res) => {
         name: user != null ? user.userName : "Anonymous User",
         reportedBy: userInfo || null,
         address,
+        state: "Delhi",
       });
 
       return res.status(201).json({
