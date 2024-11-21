@@ -29,7 +29,7 @@ exports.reportAnonymous = async (req, res) => {
       let user = null;
 
       if (userInfo != null) {
-        user = await User.findOne({ userEmail: userInfo.userEmail });
+        user = await User.findOne({ _id: userInfo });
       }
 
       // Create new report
@@ -38,6 +38,7 @@ exports.reportAnonymous = async (req, res) => {
         location: { latitude, longitude },
         description,
         category,
+        name: user.userName,
         reportedBy: userInfo || null,
         address,
       });
@@ -48,7 +49,9 @@ exports.reportAnonymous = async (req, res) => {
         newReport,
       });
     } else {
-      return res.status(400).json({ Status: "Failed", Message: "reCAPTCHA verification failed." });
+      return res
+        .status(400)
+        .json({ Status: "Failed", Message: "reCAPTCHA verification failed." });
     }
   } catch (err) {
     return res.status(500).json({

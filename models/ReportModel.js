@@ -7,6 +7,7 @@ const reportSchema = new mongoose.Schema(
     address: String,
     description: String,
     category: String,
+    name: String,
     reportedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Reference to the User model
